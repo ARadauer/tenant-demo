@@ -2,13 +2,13 @@ package com.radauer.demo.tenant;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.Filter;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,13 +18,20 @@ import org.springframework.stereotype.Component;
 public class TenantFilter implements Filter
 {
 
-  public static String TENANT_PARAMETER_NAME = "tenant";
-  @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-    throws IOException, ServletException
-  {
-    HttpServletRequest req = (HttpServletRequest) request;
-    TenantHolder.setTenant(req.getParameter(TENANT_PARAMETER_NAME));
-    chain.doFilter(request, response);
-  }
+    public static String TENANT_PARAMETER_NAME = "tenant";
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException
+    {
+        try {
+            HttpServletRequest req = (HttpServletRequest) request;
+            TenantHolder.setTenant(req.getParameter(TENANT_PARAMETER_NAME));
+            chain.doFilter(request, response);
+        }finally
+        {
+            TenantHolder.clean();
+        }
+
+    }
 }
